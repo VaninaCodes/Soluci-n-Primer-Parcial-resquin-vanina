@@ -51,7 +51,7 @@ export const createProject = async (req, res) => {
     const createdProject = await ProjectModel.findByPk(project.id, {
       include: [leaderInclude, technologiesInclude],
     });
-    return res.status(201).json({ data: createProject });
+    return res.status(201).json({ data: createdProject });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Error interno del servidor" });

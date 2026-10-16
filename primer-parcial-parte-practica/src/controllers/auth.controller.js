@@ -10,13 +10,13 @@ export const register = async (req, res) => {
     // TODO: 1. Hashear la password antes de guardarla (hashPassword).
     const hashedPassword = await hashPassword(password);
     // TODO: 2. Crear el user y su profile asociado.
-    const newUser = await UserModel.create({
+    const user = await UserModel.create({
       username: username,
       email: email,
       password: hashedPassword,
       role: role,
     });
-    await ProfileModel.create({
+    const newProfile = await ProfileModel.create({
       employee_number: profile.employee_number,
       first_name: profile.first_name,
       last_name: profile.last_name,
@@ -27,10 +27,10 @@ export const register = async (req, res) => {
     return res.status(201).json({
       message: "Usuario registrado correctamente",
       user: {
-        id: newUser.id,
-        username: newUser.username,
-        email: newUser.email,
-        role: newUser.role,
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -50,11 +50,11 @@ export const login = async (req, res) => {
     }
     const user = await UserModel.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).json({ message: "Credenciales inválidas" });
+      return res.status(401).json({ message: "Credenciales inválidas" });
     }
     const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Credenciales son invalidas" });
+      return res.status(401).json({ message: "Credenciales son invalidas" });
     }
     // TODO: 2. Firmar un JWT con el id y el role del user (signToken).
     const token = signToken({ id: user.id, role: user.role });
