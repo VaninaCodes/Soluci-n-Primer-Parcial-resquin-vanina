@@ -17,6 +17,12 @@ export const ProjectTechnologyModel = sequelize.define(
     project_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "Projects",
+        key: "id",
+      },
+      // Si se borra el project, se borran solo sus filas de esta tabla
+      onDelete: "CASCADE",
     },
     // TODO: 3. technology_id: entero, obligatorio, clave foránea hacia Technology.
     technology_id: {
@@ -27,6 +33,7 @@ export const ProjectTechnologyModel = sequelize.define(
         model: "Technologies",
         key: "id",
       },
+      onDelete: "CASCADE",
     },
   },
   {

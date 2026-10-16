@@ -5,21 +5,23 @@ import { signToken } from "../helpers/jwt.helper.js";
 
 export const register = async (req, res) => {
   try {
+    // Los datos del perfil llegan en el objeto 'profile'
+    const { username, email, password, role, profile } = req.body;
     // TODO: 1. Hashear la password antes de guardarla (hashPassword).
-    const hashedPassword = await hashPassword(validatedData.password);
+    const hashedPassword = await hashPassword(password);
     // TODO: 2. Crear el user y su profile asociado.
     const newUser = await UserModel.create({
-      username: validatedData.username,
-      email: validatedData.email,
+      username: username,
+      email: email,
       password: hashedPassword,
-      role: "user",
+      role: role,
     });
     await ProfileModel.create({
-      employee_number: validatedData.employee_number,
-      first_name: validatedData.first_name,
-      last_name: validatedData.last_name,
-      phone: validatedData.phone,
-      user_id: newUser.id,
+      employee_number: profile.employee_number,
+      first_name: profile.first_name,
+      last_name: profile.last_name,
+      phone: profile.phone,
+      user_id: user.id,
     });
     // TODO: 3. Responder con código 201, un mensaje de éxito y devolver el usuario sin la password.
     return res.status(201).json({
@@ -61,7 +63,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
-      maxAge: 2 * 60 * 60 * 1000, // dos horas
+      maxAge: 60 * 60 * 1000, // dos horas
     });
     // ? Considerar qué mensaje devolver ante credenciales inválidas.
     return res.status(200).json({
